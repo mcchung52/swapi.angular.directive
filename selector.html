@@ -1,7 +1,14 @@
-<div class="dropdown">
+<div ng-hide="planets.length == 61">
+  Loading...<br>
+  <img src="http://www.animatedimages.org/data/media/636/animated-star-wars-image-0038.gif">
+</div>
+
+<div class="dropdown" ng-show="planets.length == 61">
   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Planets
   <span class="caret"></span></button>
   <ul class="dropdown-menu">
-    <li ng-repeat="planet in planets">{{planet}}</li>
+    <li ng-show="planet.residents.length >= 3" ng-repeat="planet in planets track by $index"><a href="#" >{{planet.name}}</a></li>
   </ul>
 </div>
+
+<!-- ng-click="clicked($index)"  --> 

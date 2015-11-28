@@ -3,16 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title>Swapi Custom Directive</title>
-  <link rel="stylesheet" href="bootstrap.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
-  <script src="angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.min.js"></script>
   <script src="app.js"></script>
 </head>
-<body>
+<body ng-app="app">
   
-  <h1>Swapi Custom Directive</h1>
-  
+  <h1>Swapi - Planets</h1>
+
   <swapi-planets-selector min-residents="3"></swapi-planets-selector>
 
+  <swapi-planet id="1">
+    <swapi-resident id="1"></swapi-resident>
+    <swapi-resident id="2"></swapi-resident>
+    <swapi-resident id="3"></swapi-resident>
+  </swapi-planet>
+
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </body>
 </html>
