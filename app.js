@@ -1,13 +1,5 @@
 var app = angular.module('app', []);
 
-// app.controller("mainCtrl", function(){
-//   this.clicked = function(index) {
-//     $scope.selectedIdx = index;
-//     console.log(index);
-//   }
-  
-// });
-
 app.directive("swapiPlanetsSelector", function() {
   return {
     scope: {
@@ -16,13 +8,12 @@ app.directive("swapiPlanetsSelector", function() {
     templateUrl: "selector.html",
     
     controller: function($scope, swapiSvc) {
-      swapiSvc.getPlanets(function(planets){
+      $scope.planets = [];
+      swapiSvc.getPlanets(function(planets, page){
         $scope.planets = planets;
-        // $scope.minResidents = minResidents;
-        // console.log(minResidents);
+        $scope.pageNum = page;
         console.log($scope.planets);
         console.log($scope.planetName);
-        //console.log($scope.minResidents);
       });
       
       $scope.showPlanet = function(planet) {
@@ -39,9 +30,11 @@ app.directive("swapiPlanet", function() {
     
     controller: function($scope, swapiSvc) {
       $scope.$on('PLANET', function(_, planet){
+        $scope.resCnt = 0;
         console.log("inside 'on' listening to PLANET", planet);
         $scope.planetName = planet.name;
         $scope.planetPop = planet.population;
+        $scope.resCnt = planet.residents.length;
       });
     }
   }
@@ -52,14 +45,17 @@ app.directive("swapiResident", function() {
     templateUrl: "resident.html",
     
     controller: function($scope, swapiSvc) {
-      // $scope.$on('PLANET', function(_, planet){
-      //   console.log("inside 'on' listening to PLANET", planet);
-      //   $scope.planetName = planet.name;
-      //   $scope.planetPop = planet.population;
-      // });
       console.log('inside resident directive');
-      swapiSvc.getResidents(function(residents){
-        console.log(residents);
+
+      $scope.$on('PLANET', function(_, planet){
+        $scope.residents = [];
+        $scope.loadedRes = 0;
+        swapiSvc.getResidentFromPlanet(planet, function(residents){
+          console.log(residents);
+          $scope.residents = residents;
+          $scope.loadedRes++;
+          console.log(loadedRes);
+        });        
       });
     }
   }
@@ -67,28 +63,35 @@ app.directive("swapiResident", function() {
 
 app.service("swapiSvc", function($http){
   var allPlanets = [];
+  var allResidents = [];
   
   this.getPlanets = function(cb) {
     for (var i=1;i<=7;i++) {
       $http.get("http://swapi.co/api/planets/?page=" + i)
       .then(function(resp){
+        console.log('inside getPlanets', resp);
         allPlanets = allPlanets.concat(resp.data.results);
-        cb(allPlanets);
+        var page;
+        if (resp.data.next == null) {
+          page = Number(resp.data.previous.match(/\d$/)) + 1;
+        } else {
+          page = resp.data.next.match(/\d$/) - 1;
+        }
+        console.log(page);
+        cb(allPlanets, page);
       });
     }
   }
-  this.getResidents = function(cb) {
-    for (var i=1;i<=7;i++) {
-      $http.get("http://swapi.co/api/planets/?page=" + i)
+  this.getResidentFromPlanet = function(planet, cb) {
+    for (var i=0;i<planet.residents.length;i++) {
+      var residentId = planet.residents[i].match(/(\d+)\/$/)[1];
+      console.log(residentId);
+      $http.get("http://swapi.co/api/people/" + residentId + '/')
       .then(function(resp){
-        allResidents = allResidents.concat(resp.data.results);
+        console.log(resp);
+        allResidents = allResidents.concat(resp.data);
         cb(allResidents);
       });
     }
   }
 });
-
-
-
-// $scope.data = ips;
-// $scope.headers = Object.keys($scope.data[Object.keys($scope.data)[0]]); 

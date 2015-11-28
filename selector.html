@@ -1,5 +1,5 @@
 <div ng-hide="planets.length == 61">
-  Loading...<br>
+  Loading... getting page {{pageNum}}<br>
   <img src="http://www.animatedimages.org/data/media/636/animated-star-wars-image-0038.gif">
 </div>
 
@@ -10,5 +10,3 @@
     <li ng-show="planet.residents.length >= minResidents" ng-repeat="planet in planets track by $index" ng-click="showPlanet(planet)"><a href="#" >{{planet.name}}</a></li>
   </ul>
 </div>
-
-<!-- ng-click="clicked($index)"  --> 
